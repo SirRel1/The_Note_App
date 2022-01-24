@@ -28,13 +28,11 @@ const writeToFile = (destination, content) =>
 // Read from file and append note.
 const readAndAppend = (content, file) => {
 	fs.readFile(file, 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-		} else {
-			const parsedData = JSON.parse(data);
-			parsedData.push(content);
-			writeToFile(file, parsedData);
-		}
+		const parsedData = JSON.parse(data);
+		err ? console.error(err) : 
+		parsedData.push(content);
+		writeToFile(file, parsedData);
+		
 	});
 };
 
@@ -71,12 +69,12 @@ app.delete('/api/notes/:id', (req, res) => {
 	readFromFile('./db/db.json')
 		.then((data) => JSON.parse(data))
 		.then((json) => {
-			// Make a new array of all tips except the one with the ID provided in the URL
+			// Make a new array of all notes except the one with the ID provided in the URL
 			const result = json.filter((notesjs) => notesjs.id !== noteId);
 			// Save that array to the filesystem
 			writeToFile('./db/db.json', result);
 			// Respond to the DELETE request
-			res.json(`Item ${noteId} has been deleted 🗑️`);
+			res.json(`Item ${noteId} has been deleted`);
 		});
 });
 
